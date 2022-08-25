@@ -12,8 +12,9 @@ def index(request):
         file_name = fs.save(uploaded_img.name, uploaded_img)
         url = fs.url(file_name)
         print(file_name)
+        print(url)
         script_name = 'GFPGAN/inference_gfpgan.py'
-        command_to_run = 'python ' + script_name + ' -i ' + url[1:] + ' -o results -v 1.3 -s 2'
+        command_to_run = 'python ' + script_name + ' -i ' + "static/purifyit/media/"+ file_name + ' -o static/purifyit/results -v 1.3 -s 2'
         
         try:
             output = subprocess.check_output(command_to_run, stderr=subprocess.STDOUT, shell=True)
@@ -21,6 +22,7 @@ def index(request):
             output = e.output
         print(output)
         return render(request, 'purifyit/index.html', {
-            "og_img" : file_name
+            "og_img" : file_name,
+            "restored_img": file_name
         })
     return render(request, 'purifyit/index.html')
