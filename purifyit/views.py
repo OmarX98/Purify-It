@@ -3,10 +3,13 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.core.files.storage import FileSystemStorage
 import subprocess
+import os
+import shutil
 # Create your views here.
 
 def index(request):
     if request.method == "POST":
+        free_storage()
         uploaded_img = request.FILES['img']
         fs = FileSystemStorage()
         file_name = fs.save(uploaded_img.name, uploaded_img)
@@ -26,3 +29,21 @@ def index(request):
             "restored_img": file_name
         })
     return render(request, 'purifyit/index.html')
+
+def free_storage():
+
+    media_path = r"static/purifyit/media/"
+    for file_name in os.listdir(media_path):
+        # construct full file path
+        file_path = media_path + file_name
+        if os.path.isfile(file_path):
+            print('Deleting file:', file_name)
+            os.remove(file_path)
+        
+    path = r"static/purifyit/results/"
+    for dir_name in os.listdir(path):
+        # construct full directory path
+        dir_path = path + dir_name
+        if os.path.isdir(dir_path):
+            print('Deleting Dir:', dir_name)
+            shutil.rmtree(dir_path)
